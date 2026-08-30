@@ -1,0 +1,9 @@
+{
+  "uploadedAt": "2026-08-30T03:42:54.432Z",
+  "totalDocuments": 934,
+  "totalVectors": 934,
+  "model": "BAAI/bge-small-en-v1.5",
+  "dimension": 384,
+  "metric": "COSINE",
+  "upstashUrl": "https://quick-eel-44266-us1-vector.upstash.io"
+}
