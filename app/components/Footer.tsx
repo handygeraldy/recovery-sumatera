@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
               </span>
             </div>
             <p className="text-muted-foreground leading-relaxed text-xs max-w-md">
-              Platform dashboard analisis geospasial ketahanan pangan dan pemantauan pemulihan pasca-bencana tingkat desa di Aceh, Sumatera Utara, dan Sumatera Barat.
+              Platform dashboard analisis geospasial ketahanan pangan dan pemantauan pemulihan pasca-bencana tingkat desa/kelurahan di Aceh, Sumatera Utara, dan Sumatera Barat.
             </p>
           </div>
 
