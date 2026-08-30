@@ -76,7 +76,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <strong className="text-foreground font-semibold">Aceh</strong>,{' '}
             <strong className="text-foreground font-semibold">Sumatera Utara</strong>, dan{' '}
             <strong className="text-foreground font-semibold">Sumatera Barat</strong> menggunakan
-            pemodelan spasial multi-temporal dan estimasi produktivitas padi berbasis machine learning.
+            pemodelan spasial multi-temporal.
           </p>
 
           {/* Quick Province Switcher Pills */}
@@ -118,7 +118,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <Card className="bg-card border-border backdrop-blur-md shadow-md dark:shadow-xl hover:border-emerald-500/40 transition-all duration-300">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">Total Desa Terpantau</span>
+                  <span className="text-xs font-medium text-muted-foreground">Total Desa/Kelurahan Terpantau</span>
                   <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     <Layers className="w-4 h-4" />
                   </div>
@@ -146,7 +146,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <Card className="bg-card border-border backdrop-blur-md shadow-md dark:shadow-xl hover:border-rose-500/40 transition-all duration-300">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">Desa Rawan Pangan (Defisit)</span>
+                  <span className="text-xs font-medium text-muted-foreground">Desa/Kelurahan Rawan Pangan (Defisit)</span>
                   <div className="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
                     <AlertTriangle className="w-4 h-4" />
                   </div>
@@ -204,7 +204,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <Card className="bg-card border-border backdrop-blur-md shadow-md dark:shadow-xl hover:border-emerald-500/40 transition-all duration-300">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">Desa Pulih Penuh</span>
+                  <span className="text-xs font-medium text-muted-foreground">Desa/Kelurahan Pulih Penuh</span>
                   <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>

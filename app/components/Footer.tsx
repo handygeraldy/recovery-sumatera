@@ -58,7 +58,7 @@ export const Footer: React.FC = () => {
               <span>Disclaimer Indikatif</span>
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed bg-card p-3 rounded-lg border border-border">
-              Data ini merupakan hasil estimasi pemodelan spasial dan bersifat indikatif. Untuk keperluan resmi, harap merujuk pada data BPS dan BNPB terbaru.
+              Data ini merupakan hasil estimasi pemodelan spasial dan bersifat indikatif. Untuk keperluan resmi, harap merujuk pada data resmi yang dirilis.
             </p>
           </div>
         </div>
@@ -66,10 +66,10 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar: Copyright */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-muted-foreground text-[11px]">
           <div>
-            &copy; 2026 Tim Peneliti Ketahanan Pangan. All rights reserved.
+            &copy; 2026 Handy Bayu. All rights reserved.
           </div>
           <div className="flex items-center gap-4">
-            <span>Sistem Informasi Geografis & Machine Learning</span>
+            <span>Sistem Informasi Geografis Recovery Sumatera</span>
             <span>v1.0.0</span>
           </div>
         </div>

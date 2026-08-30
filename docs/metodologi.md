@@ -23,7 +23,7 @@ Total cakupan wilayah adalah 13.900 desa / kelurahan.
 ## 4. Definisi Variabel & Rumus Perhitungan
 - **Produktivitas Padi (`produktivitas`):** Dihitung dalam satuan **Ton per kilometer persegi (Ton/km²)**. Diestimasi menggunakan model CatBoost Regressor berbasis fitur biofisik dan penginderaan jauh.
 - **Produksi Padi (`produksi`):** Total estimasi gabah kering panen dalam satuan **Ton** per desa.
-- **Kebutuhan Energi (`energy_needs`):** Total kebutuhan kalori penduduk desa per periode dalam satuan **Megakalori (Mcal)**, dihitung dari: $\text{Populasi Desa} \times 2.100\text{ kcal/kapita/hari} \times \text{Jumlah Hari}$.
+- **Kebutuhan Energi (`energy_needs`):** Total kebutuhan kalori penduduk desa/kelurahan per periode dalam satuan **Megakalori (Mcal)**, dihitung dari: $\text{Populasi Desa} \times 2.100\text{ kcal/kapita/hari} \times \text{Jumlah Hari}$.
 - **Neraca Pangan / Energy Balance (`energy_balance_value`):** Selisih ketersediaan energi kalori beras dikurangi total kebutuhan energi penduduk (Mcal).
   - Nilai $> 0$: Surplus Pangan
   - Nilai $< 0$: Defisit Pangan (Rawan Pangan)

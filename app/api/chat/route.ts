@@ -132,8 +132,8 @@ export async function POST(req: Request) {
     const contextText =
       relevantDocs.length > 0
         ? relevantDocs
-            .map((doc, i) => `--- DOKUMEN RELEVAN ${i + 1} (${doc.metadata.source || 'Knowledge Base'}) ---\n${doc.content}`)
-            .join('\n\n')
+          .map((doc, i) => `--- DOKUMEN RELEVAN ${i + 1} (${doc.metadata.source || 'Knowledge Base'}) ---\n${doc.content}`)
+          .join('\n\n')
         : 'Data spesifik tidak ditemukan di database.';
 
     // 2. Susun System Prompt ter-grounding data dengan instruksi KaTeX yang jelas
@@ -166,8 +166,7 @@ ${contextText}
     // 3. Inisialisasi Provider Groq
     if (!GROQ_API_KEY || GROQ_API_KEY.includes('your_groq_api_key')) {
       return new Response(
-        `Halo! Koneksi AI asisten aktif dengan data lokal. Untuk menghubungkan live LLM Groq streaming, silakan set \`GROQ_API_KEY\` pada \`.env.local\` atau Vercel Environment Variables.\n\n**Data Terkait Pertanyaan Anda:**\n${
-          relevantDocs[0]?.content || 'Dashboard memantau 13.900 desa di Aceh, Sumut, dan Sumbar.'
+        `Halo! Koneksi AI asisten aktif dengan data lokal. Untuk menghubungkan live LLM Groq streaming, silakan set \`GROQ_API_KEY\` pada \`.env.local\` atau Vercel Environment Variables.\n\n**Data Terkait Pertanyaan Anda:**\n${relevantDocs[0]?.content || 'Dashboard memantau 13.900 desa/kelurahan di Aceh, Sumut, dan Sumbar.'
         }`,
         {
           headers: { 'Content-Type': 'text/plain; charset=utf-8' },

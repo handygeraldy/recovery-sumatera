@@ -72,7 +72,7 @@ export const ProvincialRecommendation: React.FC = () => {
             Rekomendasi Umum Tingkat Provinsi
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Arahan strategis dan intervensi prioritas per provinsi hasil sintesis pemodelan ketahanan pangan dan tingkat kerentanan pasca-bencana.
+            Arahan strategis dan intervensi prioritas per provinsi hasil analisis.
           </p>
         </div>
 

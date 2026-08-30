@@ -211,8 +211,8 @@ export const MapSection: React.FC<MapSectionProps> = ({
               Peta Geospasial Ketahanan & Pemulihan Pangan
             </h2>
             <p className="text-muted-foreground text-sm mt-1 max-w-2xl">
-              Visualisasi multi-layer spasial tingkat desa dengan pewarnaan Global Quantile untuk
-              eksplorasi produktivitas, neraca energi pangan, dan status pemulihan.
+              Visualisasi spasial tingkat desa/kelurahan untuk
+              eksplorasi produktivitas, neraca pangan, dan pemulihan pasca bencana.
             </p>
           </div>
 
@@ -258,7 +258,7 @@ export const MapSection: React.FC<MapSectionProps> = ({
                   Layer Metrik Spasial
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Pilih variabel data yang akan divisualisasikan pada poligon desa
+                  Pilih variabel data yang akan divisualisasikan
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -308,11 +308,9 @@ export const MapSection: React.FC<MapSectionProps> = ({
                   )}
                 </div>
                 <CardDescription className="text-xs">
-                  {selectedMapType === 'Neraca Pangan'
-                    ? 'Pilih linimasa observasi untuk memantau dinamika neraca energi pra, saat, dan pasca-bencana'
-                    : multiPeriodSupported
-                      ? 'Pilih linimasa observasi untuk melihat pergerakan metrik lintas periode'
-                      : `Layer ${selectedMapType} merupakan hasil pemodelan klasifikasi status pasca-bencana (Mar 2026)`}
+                  {multiPeriodSupported
+                    ? 'Pilih linimasa observasi untuk melihat pergerakan metrik lintas periode'
+                    : `Layer ${selectedMapType} merupakan hasil pemodelan klasifikasi status pasca-bencana (Mar 2026)`}
                 </CardDescription>
               </CardHeader>
               <CardContent>

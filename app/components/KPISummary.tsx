@@ -42,7 +42,7 @@ export function KPISummary({ data, provinsi, loading = false }: KPISummaryProps)
 
   const kpis = [
     {
-      label: 'Total Desa Terpantau',
+      label: 'Total Desa/Kelurahan Terpantau',
       value: `${totalDesa.toLocaleString('id-ID')} Desa`,
       sub: 'Cakupan pemodelan spasial tingkat desa',
       icon: Layers,
@@ -51,7 +51,7 @@ export function KPISummary({ data, provinsi, loading = false }: KPISummaryProps)
       trend: 'neutral',
     },
     {
-      label: 'Desa Rawan Pangan (Defisit)',
+      label: 'Desa/Kelurahan Rawan Pangan (Defisit)',
       value: `${defisitDesa.toLocaleString('id-ID')} (${defisitPercentage.toFixed(1)}%)`,
       sub: 'Neraca energi < 0 Mcal (Mar 2026)',
       icon: AlertTriangle,
@@ -69,7 +69,7 @@ export function KPISummary({ data, provinsi, loading = false }: KPISummaryProps)
       trend: 'neutral',
     },
     {
-      label: 'Desa Pulih Penuh',
+      label: 'Desa/Kelurahan Pulih Penuh',
       value: `${pulihPenuh.toLocaleString('id-ID')}`,
       sub: 'Status resilient_pulih_penuh (Mar 2026)',
       icon: CheckCircle2,
