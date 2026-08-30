@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/app/components/ui/card';
 import { Badge } from '@/app/components/ui/badge';
 import { IProvincialRecommendation } from '@/app/types';
@@ -12,6 +13,26 @@ import {
   Mountain,
   Target,
 } from 'lucide-react';
+
+interface ProvinceLogoInfo {
+  src: string;
+  alt: string;
+}
+
+const PROVINCE_LOGOS: Record<string, ProvinceLogoInfo> = {
+  aceh: {
+    src: '/logo/aceh.webp',
+    alt: 'Lambang Provinsi Aceh',
+  },
+  sumut: {
+    src: '/logo/sumut.webp',
+    alt: 'Lambang Provinsi Sumatera Utara',
+  },
+  sumbar: {
+    src: '/logo/sumbar.png',
+    alt: 'Lambang Provinsi Sumatera Barat',
+  },
+};
 
 const provincialRecommendations: IProvincialRecommendation[] = [
   {
@@ -52,13 +73,19 @@ const provincialRecommendations: IProvincialRecommendation[] = [
   },
 ];
 
-const provinceIcons = {
-  aceh: <Droplets className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />,
-  sumut: <Sprout className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
-  sumbar: <Mountain className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+const provinceFallbackIcons: Record<string, React.ReactNode> = {
+  aceh: <Droplets className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />,
+  sumut: <Sprout className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
+  sumbar: <Mountain className="w-6 h-6 text-amber-600 dark:text-amber-400" />,
 };
 
 export const ProvincialRecommendation: React.FC = () => {
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+
+  const handleImageError = (kode: string) => {
+    setImageErrors((prev) => ({ ...prev, [kode]: true }));
+  };
+
   return (
     <section className="py-14 bg-background border-t border-border transition-colors duration-200">
       <div className="container mx-auto px-4 md:px-6">
@@ -78,72 +105,102 @@ export const ProvincialRecommendation: React.FC = () => {
 
         {/* 3-Column Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {provincialRecommendations.map((item) => (
-            <Card
-              key={item.kode}
-              className="bg-card border-border backdrop-blur-md shadow-md dark:shadow-xl hover:border-emerald-500/40 transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-muted border border-border flex items-center justify-center">
-                      {provinceIcons[item.kode]}
+          {provincialRecommendations.map((item) => {
+            const logo = PROVINCE_LOGOS[item.kode];
+            const hasError = imageErrors[item.kode];
+
+            return (
+              <Card
+                key={item.kode}
+                className="bg-card border-border backdrop-blur-md shadow-md dark:shadow-xl hover:border-emerald-500/40 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+              >
+                <div>
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      {/* ✅ Logo Provinsi dengan Circular Badge */}
+                      <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/90 flex items-center justify-center p-2 shadow-xs group-hover:scale-105 transition-transform">
+                        {logo && !hasError ? (
+                          <Image
+                            src={logo.src}
+                            alt={logo.alt}
+                            width={56}
+                            height={56}
+                            className="object-contain w-full h-full"
+                            onError={() => handleImageError(item.kode)}
+                            priority
+                          />
+                        ) : (
+                          provinceFallbackIcons[item.kode]
+                        )}
+                      </div>
+
+                      <Badge
+                        variant="outline"
+                        className="border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs bg-emerald-500/10 font-bold px-2.5 py-1"
+                      >
+                        Provinsi {item.provinsi}
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className="border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs bg-emerald-500/10">
-                      Provinsi {item.provinsi}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg font-bold text-foreground tracking-tight">
-                    {item.provinsi}
-                  </CardTitle>
-                  <CardDescription className="text-xs text-emerald-700 dark:text-emerald-400 font-medium mt-1 leading-relaxed">
-                    {item.fokus_utama}
-                  </CardDescription>
-                </CardHeader>
 
-                <CardContent className="space-y-4 pt-0">
-                  {/* Action points */}
-                  <div className="space-y-2.5">
-                    <div className="text-xs font-semibold text-foreground">Poin Intervensi Strategis:</div>
-                    <ul className="space-y-2">
-                      {item.rekomendasi.map((rec, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                          <span>{rec}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    <CardTitle className="text-xl font-bold text-foreground tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                      {item.provinsi}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-emerald-700 dark:text-emerald-400 font-medium mt-1 leading-relaxed">
+                      {item.fokus_utama}
+                    </CardDescription>
+                  </CardHeader>
 
-                  {/* Key Target Indicator */}
-                  <div className="p-3 rounded-lg bg-muted/60 border border-border text-xs">
-                    <div className="flex items-center gap-1.5 text-muted-foreground font-medium mb-1">
-                      <Target className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                      <span>Target Kinerja Utama:</span>
+                  <CardContent className="space-y-4 pt-0">
+                    {/* Action points */}
+                    <div className="space-y-2.5">
+                      <div className="text-xs font-semibold text-foreground">
+                        Poin Intervensi Strategis:
+                      </div>
+                      <ul className="space-y-2">
+                        {item.rekomendasi.map((rec, idx) => (
+                          <li
+                            key={idx}
+                            className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                            <span>{rec}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <p className="text-foreground font-medium text-[11px]">
-                      {item.indikator_kunci}
-                    </p>
-                  </div>
-                </CardContent>
-              </div>
 
-              {/* Priority Programs Footer */}
-              <div className="p-6 pt-0 mt-auto">
-                <div className="text-[11px] text-muted-foreground mb-2 font-medium">Program Prioritas:</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {item.program_prioritas.map((prog, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-1 rounded bg-muted border border-border text-foreground text-[11px] font-medium"
-                    >
-                      {prog}
-                    </span>
-                  ))}
+                    {/* Key Target Indicator */}
+                    <div className="p-3 rounded-xl bg-muted/60 border border-border text-xs">
+                      <div className="flex items-center gap-1.5 text-muted-foreground font-semibold mb-1">
+                        <Target className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                        <span>Target Kinerja Utama:</span>
+                      </div>
+                      <p className="text-foreground font-medium text-[11px]">
+                        {item.indikator_kunci}
+                      </p>
+                    </div>
+                  </CardContent>
                 </div>
-              </div>
-            </Card>
-          ))}
+
+                {/* Priority Programs Footer */}
+                <div className="p-6 pt-0 mt-auto">
+                  <div className="text-[11px] text-muted-foreground mb-2 font-semibold">
+                    Program Prioritas:
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {item.program_prioritas.map((prog, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2.5 py-1 rounded-lg bg-muted border border-border text-foreground text-[11px] font-medium"
+                      >
+                        {prog}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>

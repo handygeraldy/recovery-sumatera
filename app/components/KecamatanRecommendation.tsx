@@ -13,7 +13,6 @@ import {
 } from '@/app/components/ui/select';
 import {
   Search,
-  BookOpen,
   Filter,
   RotateCcw,
   Sparkles,
@@ -22,32 +21,59 @@ import {
   FileText,
   AlertCircle,
   Building,
+  Award,
 } from 'lucide-react';
 import { ProvinceKey } from '@/app/types';
 
-interface IKecamatanNarrative {
-  idkec?: string;
+export interface IKecamatanRecommendation {
+  idkec: string;
   nama_prov: string;
   nama_kab: string;
   nama_kec: string;
   text_narasi: string;
+  resilience_class: string;
+  skor_prioritas: number;
+  ranking: number;
 }
 
 interface KecamatanRecommendationProps {
   initialProvince?: ProvinceKey | 'ALL';
 }
 
+const RESILIENCE_BADGE_MAP: Record<string, { label: string; className: string }> = {
+  tidak_terdampak: {
+    label: 'Tidak Terdampak',
+    className: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30',
+  },
+  resilient_pulih_penuh: {
+    label: 'Resilient - Pulih Penuh',
+    className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30',
+  },
+  pulih_lambat: {
+    label: 'Pulih Lambat',
+    className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30',
+  },
+  pulih_sebagian: {
+    label: 'Pulih Sebagian',
+    className: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30',
+  },
+  memburuk_tidak_pulih: {
+    label: 'Memburuk & Tidak Pulih',
+    className: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30',
+  },
+};
+
 export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = ({
   initialProvince = 'ALL',
 }) => {
-  const [allKecamatans, setAllKecamatans] = useState<IKecamatanNarrative[]>([]);
+  const [allKecamatans, setAllKecamatans] = useState<IKecamatanRecommendation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Filter States
   const [selectedProvinceFilter, setSelectedProvinceFilter] = useState<string>(initialProvince);
   const [selectedKabupatenFilter, setSelectedKabupatenFilter] = useState<string>('ALL');
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('ALL');
+  const [selectedResilienceFilter, setSelectedResilienceFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Fetch data narasi seluruh kecamatan
@@ -64,7 +90,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
           throw new Error('Gagal memuat katalog rekomendasi naratif kecamatan.');
         }
 
-        const data: IKecamatanNarrative[] = await res.json();
+        const data: IKecamatanRecommendation[] = await res.json();
         if (isMounted) {
           setAllKecamatans(data);
         }
@@ -146,17 +172,9 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
         return false;
       }
 
-      // 3. Filter Status (Defisit vs Surplus vs Darurat)
-      if (selectedStatusFilter !== 'ALL') {
-        const text = kec.text_narasi.toLowerCase();
-        if (selectedStatusFilter === 'defisit' && !text.includes('defisit')) return false;
-        if (selectedStatusFilter === 'surplus' && !text.includes('surplus')) return false;
-        if (
-          selectedStatusFilter === 'darurat' &&
-          !text.includes('darurat') &&
-          !text.includes('berat')
-        )
-          return false;
+      // 3. Filter Resilience Class
+      if (selectedResilienceFilter !== 'ALL') {
+        if (kec.resilience_class !== selectedResilienceFilter) return false;
       }
 
       // 4. Search Query (Nama Kecamatan, Kabupaten, atau isi narasi)
@@ -171,12 +189,12 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
 
       return true;
     });
-  }, [allKecamatans, selectedProvinceFilter, selectedKabupatenFilter, selectedStatusFilter, searchQuery]);
+  }, [allKecamatans, selectedProvinceFilter, selectedKabupatenFilter, selectedResilienceFilter, searchQuery]);
 
   const handleResetFilters = () => {
     setSelectedProvinceFilter('ALL');
     setSelectedKabupatenFilter('ALL');
-    setSelectedStatusFilter('ALL');
+    setSelectedResilienceFilter('ALL');
     setSearchQuery('');
   };
 
@@ -203,7 +221,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
             </h2>
             <p className="text-muted-foreground text-sm mt-1 max-w-2xl">
               Panduan tindak lanjut berbasis bukti data untuk intervensi logistik pangan, rehabilitasi
-              irigasi, dan bantuan darurat di tingkat kecamatan.
+              irigasi, dan bantuan darurat di tingkat kecamatan berdasarkan ranking prioritas.
             </p>
           </div>
 
@@ -216,7 +234,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
         <div className="bg-card/90 backdrop-blur-xs p-4 rounded-xl border border-border shadow-xs space-y-3">
           <div className="flex items-center gap-2 pb-2 border-b border-border/80 text-xs font-bold text-foreground">
             <Filter className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-            <span>Filter Rekomendasi Kecamatan</span>
+            <span>Filter Rekomendasi & Ranking Prioritas</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 items-end">
@@ -269,37 +287,39 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
               </Select>
             </div>
 
-            {/* Filter Status (2 Cols) */}
-            <div className="md:col-span-2 space-y-1">
+            {/* Filter Resilience Class (3 Cols) */}
+            <div className="md:col-span-3 space-y-1">
               <label className="text-[11px] font-semibold text-muted-foreground">
-                Kondisi Pangan:
+                Status Ketahanan:
               </label>
               <Select
-                value={selectedStatusFilter}
-                onValueChange={(val) => setSelectedStatusFilter(val)}
+                value={selectedResilienceFilter}
+                onValueChange={(val) => setSelectedResilienceFilter(val)}
               >
                 <SelectTrigger className="w-full text-xs h-9 bg-background">
                   <SelectValue placeholder="Semua Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ALL">Semua Status</SelectItem>
-                  <SelectItem value="defisit">Defisit Pangan</SelectItem>
-                  <SelectItem value="surplus">Surplus Pangan</SelectItem>
-                  <SelectItem value="darurat">Bantuan Darurat</SelectItem>
+                  <SelectItem value="ALL">Semua Status Ketahanan</SelectItem>
+                  <SelectItem value="memburuk_tidak_pulih">Memburuk & Tidak Pulih</SelectItem>
+                  <SelectItem value="pulih_lambat">Pulih Lambat</SelectItem>
+                  <SelectItem value="pulih_sebagian">Pulih Sebagian</SelectItem>
+                  <SelectItem value="resilient_pulih_penuh">Resilient - Pulih Penuh</SelectItem>
+                  <SelectItem value="tidak_terdampak">Tidak Terdampak</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Search Input (3 Cols) */}
-            <div className="md:col-span-3 space-y-1">
+            {/* Search Input (2 Cols) */}
+            <div className="md:col-span-2 space-y-1">
               <label className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1">
                 <Search className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
-                <span>Cari Kecamatan:</span>
+                <span>Cari:</span>
               </label>
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Ketik nama kecamatan..."
+                  placeholder="Ketik kecamatan..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full h-9 rounded-md bg-background border border-border px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -307,7 +327,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
                   >
                     ✕
                   </button>
@@ -334,7 +354,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
         {/* ✅ CONTAINER DENGAN FIXED HEIGHT & VERTICAL SCROLL */}
         <div className="border border-border rounded-2xl overflow-hidden bg-card/60 backdrop-blur-xs shadow-md">
           {/* Scrollable Area */}
-          <div className="h-[520px] md:h-[580px] overflow-y-auto p-4 md:p-5 scrollbar-thin">
+          <div className="h-[540px] md:h-[600px] overflow-y-auto p-4 md:p-5 scrollbar-thin">
             {loading ? (
               <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-emerald-600 dark:text-emerald-500" />
@@ -364,18 +384,29 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredKecamatans.map((kec) => {
-                  const textLower = kec.text_narasi.toLowerCase();
-                  const isDarurat = textLower.includes('darurat') || textLower.includes('berat');
-                  const isDefisit = textLower.includes('defisit');
+                  const badgeInfo =
+                    RESILIENCE_BADGE_MAP[kec.resilience_class] || {
+                      label: kec.resilience_class.replace(/_/g, ' '),
+                      className: 'bg-muted text-muted-foreground border-border',
+                    };
 
                   return (
                     <Card
-                      key={`${kec.idkec || ''}-${kec.nama_prov}-${kec.nama_kab}-${kec.nama_kec}`}
+                      key={`${kec.idkec || ''}-${kec.ranking}-${kec.nama_kec}`}
                       className="bg-card border-border hover:border-emerald-500/50 transition-all duration-200 shadow-xs flex flex-col justify-between group"
                     >
                       <CardHeader className="p-4 pb-2.5">
                         <div className="flex items-start justify-between gap-2">
                           <div>
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-muted text-foreground flex items-center gap-1">
+                                <Award className="w-3 h-3 text-amber-500" />
+                                #{kec.ranking}
+                              </span>
+                              <span className="text-[10px] font-mono text-muted-foreground">
+                                Skor: {kec.skor_prioritas.toFixed(2)}
+                              </span>
+                            </div>
                             <CardTitle className="text-sm font-bold text-foreground tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                               Kec. {kec.nama_kec}
                             </CardTitle>
@@ -387,15 +418,9 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
                           {/* Status Pill Badge */}
                           <Badge
                             variant="outline"
-                            className={`text-[10px] px-2 py-0.5 flex-shrink-0 font-semibold border ${
-                              isDarurat
-                                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
-                                : isDefisit
-                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
-                                : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                            }`}
+                            className={`text-[10px] px-2 py-0.5 flex-shrink-0 font-semibold border ${badgeInfo.className}`}
                           >
-                            {isDarurat ? 'Defisit Berat' : isDefisit ? 'Defisit' : 'Surplus'}
+                            {badgeInfo.label}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -407,7 +432,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
                         <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground pt-2 border-t border-border/50 font-mono">
                           <span>ID: {kec.idkec || '-'}</span>
                           <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                            Prioritas Pasca-Bencana
+                            Prioritas #{kec.ranking}
                           </span>
                         </div>
                       </CardContent>
@@ -424,7 +449,7 @@ export const KecamatanRecommendation: React.FC<KecamatanRecommendationProps> = (
               Menampilkan <span className="font-bold text-foreground">{filteredKecamatans.length}</span> narasi rekomendasi kecamatan
             </span>
             <span className="text-[11px] text-muted-foreground/80">
-              Scroll secara vertikal di dalam area untuk menelusuri seluruh data
+              Scroll secara vertikal di dalam area untuk menelusuri seluruh data sesuai peringkat prioritas
             </span>
           </div>
         </div>
